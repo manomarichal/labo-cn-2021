@@ -1,6 +1,6 @@
 import json
 from statistic import Statistic, EmptyStatistic
-from data_handler import DataHandler
+from data_handler import DataHandler, rating_color
 from probe_lists import foreign_probes, local_probes
 
 current_dir = "./measurements/"
@@ -18,10 +18,7 @@ if __name__ == "__main__":
         filename = current_dir + file + ".json"
         f = open(filename,)
         js = json.load(f)
-        dst = None
         for item in js:
-            if dst is None:
-                dst = item["dst_name"]
             rtt_list = item["result"]
             rtt = []
             for rtt_item in rtt_list:
@@ -39,9 +36,10 @@ if __name__ == "__main__":
             else:
                 ping_results[id].append(new_stat)
 
-        DH = DataHandler(ping_results, dst)
+        DH = DataHandler(ping_results, file)
         all_data[file] = DH
 
-    for fp in foreign_probes:
-        print(all_data["gaia"].get_delay_spread_from_probe(fp))
+    ratings = all_data["gaia"].generate_ratings_average_delay(foreign_probes)
+    for k in ratings.keys():
+        print(k, ":", ratings[k], ", ", rating_color(ratings[k]))
     pass
