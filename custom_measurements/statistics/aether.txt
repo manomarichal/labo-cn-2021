@@ -1,0 +1,6 @@
+global average delay 167.4650427555905
+local average delay 80.4748358312565
+foreign average delay 237.05720829505773
+global reliability 99.11292577739303%
+local reliability 99.9483270526436%
+foreign reliability 98.4446047571926%
