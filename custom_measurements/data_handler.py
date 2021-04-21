@@ -6,11 +6,12 @@ max_color = [0, 255, 0]
 def rating_color(rating):
     diff = 1 - rating
     res = [
-        rating*min_color[0],
-        diff*max_color[1],
+        int(rating*min_color[0]),
+        int(diff*max_color[1]),
         0
     ]
     return res
+
 
 class DataHandler:
     def __init__(self, stats, dst):
@@ -141,7 +142,7 @@ class DataHandler:
         :return:
         """
         result = dict()
-        max_delay = self.get_highest_avg_delay(probes) # offset
+        max_delay = self.get_highest_avg_delay(probes)  # offset
         min_delay = self.get_lowest_avg_delay(probes)
         delay_range = max_delay - min_delay
         delay_factor = delay_range

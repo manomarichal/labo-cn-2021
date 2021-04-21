@@ -4,12 +4,37 @@ from data_handler import DataHandler, rating_color
 from probe_lists import foreign_probes, local_probes
 
 current_dir = "./measurements/"
+output_dir = "./ratings/"
 files = [
     "chaos",
     "gaia",
     "primal",
     "aether"
 ]
+optimum_output = "optimum.txt"
+
+
+def get_best_server_per_probe(data_dict, probe_id):
+    """
+    looks at all data and determines the best possible server for a specific probe
+    (based on average delay)
+    :param data_dict:
+    :param probe_id
+    :return:
+    """
+    min_delay = None
+    best_server = None
+    for key in data_dict.keys():
+        current_handler = data_dict[key]
+        current_del = current_handler.get_avg_delay_from_probe(probe_id)
+        if min_delay is None:
+            min_delay = current_del
+            best_server = key
+        if min_delay > current_del:
+            min_delay = current_del
+            best_server = key
+    return (best_server, min_delay)
+
 
 if __name__ == "__main__":
     all_data = dict()
@@ -39,7 +64,29 @@ if __name__ == "__main__":
         DH = DataHandler(ping_results, file)
         all_data[file] = DH
 
-    ratings = all_data["gaia"].generate_ratings_average_delay(foreign_probes)
-    for k in ratings.keys():
-        print(k, ":", ratings[k], ", ", rating_color(ratings[k]))
+    for server_name in files:
+        curr_local_probes = local_probes[server_name]
+        ratings = all_data[server_name].generate_ratings_average_delay(foreign_probes)
+        filename = output_dir + str(server_name) + ".txt"
+        of = open(filename, "w")
+        of.write("====== foreign probe ratings: ======\n")
+        for k in ratings.keys():
+            of.write(str(k) + " : " + str(ratings[k]) + ", " + str(rating_color(ratings[k])))
+            of.write("\n")
+
+        ratings = all_data[server_name].generate_ratings_average_delay(curr_local_probes)
+        of.write("\n====== local probe ratings: ======\n")
+        for k in ratings.keys():
+            of.write(str(k) + " : " + str(ratings[k]) + ", " + str(rating_color(ratings[k])))
+            of.write("\n")
+        of.close()
+
+    optimal = open(output_dir + optimum_output, "w")
+    for probe_id in foreign_probes:
+        p = get_best_server_per_probe(all_data, probe_id)
+        line = str(probe_id) + ": " + p[0]
+        line += ", delay is " + str(p[1])
+        optimal.write(line + "\n")
+
+    optimal.close()
     pass
