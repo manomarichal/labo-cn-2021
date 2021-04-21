@@ -97,7 +97,7 @@ def make_bar_chart(x_axis, y_axis, title, special_range=None):
     if special_range is not None:
         plt.ylim(special_range)
     plt.title(title)
-    plt.show()
+    # plt.show()
     plt.savefig(filename)
 
 
