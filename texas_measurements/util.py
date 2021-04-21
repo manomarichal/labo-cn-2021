@@ -4,7 +4,10 @@ def get_duration(string):
     number = ""
     total_time = 0
     for c in string:
-        if c == "d":
+        if c == "y":
+            total_time += int(number)*24*60*365
+            number = ""
+        elif c == "d":
             total_time += int(number)*24*60
             number = ""
         elif c == "h":
