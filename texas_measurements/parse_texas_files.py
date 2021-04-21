@@ -11,8 +11,9 @@ uptime = dict()
 
 # parse files
 for probe in probes:
+    print("========== probe " + probe + " ==========")
     parser = Parser()
-    parser.parse_file("./texas_downtime_probes/" + probe + "_data.txt")
+    parser.parse_file("./texas_data/" + probe + "_data.txt")
     uptime[probe] = parser.total_uptime
     downtime[probe] = parser.total_downtime
 
