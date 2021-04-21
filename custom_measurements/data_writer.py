@@ -85,7 +85,7 @@ def make_max_delay_dict(all_data):
     return result
 
 
-def make_bar_chart(x_axis, y_axis,title):
+def make_bar_chart(x_axis, y_axis, title, special_range=None):
     filename = stat_dir + title + ".png"
     f = open(filename, "w")
     f.close()
@@ -94,9 +94,13 @@ def make_bar_chart(x_axis, y_axis,title):
     y_pos = np.arange(len(bars))
     plt.bar(y_pos, height, color=(1.00, 0.40, 0.50, 0.8), width=-0.40)
     plt.xticks(y_pos, x_axis)
+    if special_range is not None:
+        plt.ylim(special_range)
     plt.title(title)
     plt.show()
     plt.savefig(filename)
+
+
 def make_graphs(ad):
     rd = make_reliability_dict(ad)
     add = make_avg_delay_dict(ad)
@@ -113,11 +117,10 @@ def make_graphs(ad):
         min_delay_array.append(mindd[server]["minimal_delay"])
         max_delay_array.append(maxdd[server]["maximal_delay"])
         reliability_array.append(rd[server]["average_reliability"])
-    print(reliability_array)
     make_bar_chart(server_array, avg_delay_array, "average delay")
     make_bar_chart(server_array, min_delay_array, "minimal delay")
     make_bar_chart(server_array, max_delay_array, "maximal delay")
-    make_bar_chart(server_array, reliability_array, "average reliability")
+    make_bar_chart(server_array, reliability_array, "average reliability", special_range=(90,100))
 
 
 ad = handler_output()
