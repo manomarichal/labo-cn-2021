@@ -1,5 +1,23 @@
+import csv
 from parser import Parser
-parser = Parser()
-parser.parse_file("test.txt")
-print(parser.total_uptime)
-print(parser.total_downtime)
+
+probes_file = open("./probes.csv")
+reader = csv.reader(probes_file)
+probes = reader.__next__()
+probes_file.close()
+
+downtime = dict()
+uptime = dict()
+
+# parse files
+for probe in probes:
+    parser = Parser()
+    parser.parse_file("./texas_downtime_probes/" + probe + "_data.txt")
+    uptime[probe] = parser.total_uptime
+    downtime[probe] = parser.total_downtime
+
+    print(parser.total_downtime)
+    print(parser.total_uptime)
+
+
+
