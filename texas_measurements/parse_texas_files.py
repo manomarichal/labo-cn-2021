@@ -80,7 +80,7 @@ for probe in probes:
     y_axis_more_after.append((downtime_after[probe].seconds - downtime_before[probe].seconds)/(60*60))
 
 
-graphs.make_bar_chart(x_axis, y_axis_before, "% of downtime before the snowstorm \n" + DATE_BEFORE_START.strftime("%m/%d/%Y") + "-" + DATE_START.strftime("%m/%d/%Y"), "./texas_measurements/graphs/downtime_before.png")
-graphs.make_bar_chart(x_axis, y_axis_during, "% of downtime during the snowstorm \n" + DATE_START.strftime("%m/%d/%Y") + "-" + DATE_END.strftime("%m/%d/%Y"), "./texas_measurements/graphs/downtime_during.png")
-graphs.make_bar_chart(x_axis, y_axis_after, "% of downtime after the snowstorm \n" + DATE_END.strftime("%m/%d/%Y") + "-" + DATE_AFTER_END.strftime("%m/%d/%Y"), "./texas_measurements/graphs/downtime_after.png")
-graphs.make_bar_chart(x_axis, y_axis_more_after, "# hours more downtime after the snowstorm \n " + DATE_BEFORE_START.strftime("%m/%d/%Y") + "-" + DATE_START.strftime("%m/%d/%Y") + " vs " + DATE_END.strftime("%m/%d/%Y") + "-" + DATE_AFTER_END.strftime("%m/%d/%Y"), "./texas_measurements/graphs/after_vs_before.png", yticks=[-20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30])
+graphs.make_bar_chart(x_axis, y_axis_before, "% of downtime before the snowstorm \n" + DATE_BEFORE_START.strftime("%d %b %Y") + "-" + DATE_START.strftime("%d %b %Y"), "./texas_measurements/graphs/downtime_before.png")
+graphs.make_bar_chart(x_axis, y_axis_during, "% of downtime during the snowstorm \n" + DATE_START.strftime("%d %b %Y") + "-" + DATE_END.strftime("%d %b %Y"), "./texas_measurements/graphs/downtime_during.png")
+graphs.make_bar_chart(x_axis, y_axis_after, "% of downtime after the snowstorm \n" + DATE_END.strftime("%d %b %Y") + "-" + DATE_AFTER_END.strftime("%d %b %Y"), "./texas_measurements/graphs/downtime_after.png")
+graphs.make_bar_chart(x_axis, y_axis_more_after, "# hours more downtime after the snowstorm \n ", "./texas_measurements/graphs/after_vs_before.png", yticks=[-20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30])
