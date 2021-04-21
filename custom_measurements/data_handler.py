@@ -1,7 +1,8 @@
-from statistic import Statistic, EmptyStatistic
+from custom_measurements.statistic import Statistic, EmptyStatistic
 
 min_color = [255, 0, 0]
 max_color = [0, 255, 0]
+
 
 def rating_color(rating):
     diff = 1 - rating
@@ -36,6 +37,28 @@ class DataHandler:
                     max_delay = stat.max_rtt
         return max_delay
 
+    def get_max_delay(self, probes=None):
+        """
+        :return: the max delay across all probes
+        """
+        max_delay = None
+        if probes is None:
+            for probe_id in self.stats.keys():
+                probe_delay = self.get_max_delay_from_probe(probe_id)
+                if max_delay is None:
+                    max_delay = probe_delay
+                if max_delay < probe_delay:
+                    max_delay = probe_delay
+            return max_delay
+        else:
+            for probe_id in probes:
+                probe_delay = self.get_max_delay_from_probe(probe_id)
+                if max_delay is None:
+                    max_delay = probe_delay
+                if max_delay < probe_delay:
+                    max_delay = probe_delay
+            return max_delay
+
     def get_min_delay_from_probe(self, probe_id):
         """
         gets the minimal delay for a probe across all its measurements
@@ -52,6 +75,28 @@ class DataHandler:
                     min_delay = stat.max_rtt
         return min_delay
 
+    def get_min_delay(self, probes=None):
+        """
+        :return: the min delay across all probes
+        """
+        min_delay = None
+        if probes is None:
+            for probe_id in self.stats.keys():
+                probe_delay = self.get_min_delay_from_probe(probe_id)
+                if min_delay is None:
+                    min_delay = probe_delay
+                if min_delay > probe_delay:
+                    min_delay = probe_delay
+            return min_delay
+        else:
+            for probe_id in probes:
+                probe_delay = self.get_min_delay_from_probe(probe_id)
+                if min_delay is None:
+                    min_delay = probe_delay
+                if min_delay > probe_delay:
+                    min_delay = probe_delay
+            return min_delay
+
     def get_avg_delay_from_probe(self, probe_id):
         """
         gets the average delay for a probe across all its measurements
@@ -65,6 +110,21 @@ class DataHandler:
             total_delay += sum(stat.rtt)
             total_measurements += len(stat.rtt)
         return total_delay/total_measurements
+
+    def get_avg_delay(self, probes=None):
+        avg_delay = 0
+        if probes is None:
+            probe_count = len(self.stats.keys())
+            for probe_id in self.stats.keys():
+                probe_delay = self.get_avg_delay_from_probe(probe_id)
+                avg_delay += probe_delay
+            return avg_delay/probe_count
+        else:
+            probe_count = len(probes)
+            for probe_id in probes:
+                probe_delay = self.get_avg_delay_from_probe(probe_id)
+                avg_delay += probe_delay
+            return avg_delay/probe_count
 
     def get_reliability_from_probe(self, probe_id):
         """
@@ -80,6 +140,21 @@ class DataHandler:
             total_packets_received += stat.received
         return total_packets_received/total_packets_sent
 
+    def get_reliability(self, probes=None):
+        avg_rel = 0
+        if probes is None:
+            probe_count = len(self.stats.keys())
+            for probe_id in self.stats.keys():
+                probe_rel = self.get_reliability_from_probe(probe_id)
+                avg_rel += probe_rel
+            return 100*(avg_rel/probe_count)
+        else:
+            probe_count = len(probes)
+            for probe_id in probes:
+                probe_rel = self.get_reliability_from_probe(probe_id)
+                avg_rel += probe_rel
+            return 100*(avg_rel/probe_count)
+
     def get_delay_spread_from_probe(self, probe_id):
         """
         :param probe_id: the requested probe
@@ -88,32 +163,6 @@ class DataHandler:
         mx = self.get_max_delay_from_probe(probe_id)
         mn = self.get_min_delay_from_probe(probe_id)
         return mx-mn
-
-    def get_max_delay(self):
-        """
-        :return: the max delay across all probes
-        """
-        max_delay = None
-        for probe_id in self.stats.keys():
-            probe_delay = self.get_max_delay_from_probe(probe_id)
-            if max_delay is None:
-                max_delay = probe_delay
-            if max_delay < probe_delay:
-                max_delay = probe_delay
-        return max_delay
-
-    def get_min_delay(self):
-        """
-        :return: the min delay across all probes
-        """
-        min_delay = None
-        for probe_id in self.stats.keys():
-            probe_delay = self.get_min_delay_from_probe(probe_id)
-            if min_delay is None:
-                min_delay = probe_delay
-            if min_delay > probe_delay:
-                min_delay = probe_delay
-        return min_delay
 
     def get_highest_avg_delay(self, probes):
         max_delay = None
@@ -148,9 +197,6 @@ class DataHandler:
         delay_factor = delay_range
         for probe_id in probes:
             avg_delay = self.get_avg_delay_from_probe(probe_id)
-            print("delay_range: ", delay_range)
-            print("delay_factor: ", delay_factor)
-            print("average_delay:", avg_delay)
             delay_rating = (avg_delay - min_delay) / delay_factor
             result[probe_id] = 1-delay_rating
             # higher delay should get a lower rating

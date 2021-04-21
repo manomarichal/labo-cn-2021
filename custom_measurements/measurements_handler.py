@@ -1,7 +1,7 @@
 import json
-from statistic import Statistic, EmptyStatistic
-from data_handler import DataHandler, rating_color
-from probe_lists import foreign_probes, local_probes
+from custom_measurements.statistic import Statistic, EmptyStatistic
+from custom_measurements.data_handler import DataHandler, rating_color
+from custom_measurements.probe_lists import foreign_probes, local_probes
 
 current_dir = "./measurements/"
 output_dir = "./ratings/"
@@ -33,10 +33,10 @@ def get_best_server_per_probe(data_dict, probe_id):
         if min_delay > current_del:
             min_delay = current_del
             best_server = key
-    return (best_server, min_delay)
+    return best_server, min_delay
 
 
-if __name__ == "__main__":
+def handler_output():
     all_data = dict()
     for file in files:
         ping_results = dict()
@@ -49,20 +49,20 @@ if __name__ == "__main__":
             for rtt_item in rtt_list:
                 if "rtt" in rtt_item.keys():
                     rtt.append(rtt_item["rtt"])
-            id = int(item["prb_id"])
+            prb_id = int(item["prb_id"])
             sent = int(item["sent"])
             received = int(item["rcvd"])
             if len(rtt) != 0:
-                new_stat = Statistic(id, rtt, sent, received)
+                new_stat = Statistic(prb_id, rtt, sent, received)
             else:
-                new_stat = EmptyStatistic(id, sent)
-            if id not in ping_results.keys():
-                ping_results[id] = [new_stat]
+                new_stat = EmptyStatistic(prb_id, sent)
+            if prb_id not in ping_results.keys():
+                ping_results[prb_id] = [new_stat]
             else:
-                ping_results[id].append(new_stat)
+                ping_results[prb_id].append(new_stat)
 
-        DH = DataHandler(ping_results, file)
-        all_data[file] = DH
+        dh = DataHandler(ping_results, file)
+        all_data[file] = dh
 
     for server_name in files:
         curr_local_probes = local_probes[server_name]
@@ -89,4 +89,4 @@ if __name__ == "__main__":
         optimal.write(line + "\n")
 
     optimal.close()
-    pass
+    return all_data
