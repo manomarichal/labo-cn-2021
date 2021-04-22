@@ -201,3 +201,13 @@ class DataHandler:
             result[probe_id] = 1-delay_rating
             # higher delay should get a lower rating
         return result
+
+    def get_all_average_delays(self, foreign=None):
+        result = []
+        if foreign is not None:
+            for probe_id in foreign:
+                result.append(self.get_avg_delay_from_probe(probe_id))
+        else:
+            for probe_id in self.stats.keys():
+                result.append(self.get_avg_delay_from_probe(probe_id))
+        return result
